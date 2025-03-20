@@ -16,6 +16,10 @@ const Search = () => {
     error: moviesError,
   } = useFetch(() => fetchMovies({ query: searchQuery }), false);
 
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+  };
+
   return (
     <View className="flex-1 bg-primary">
       <Image
@@ -44,9 +48,9 @@ const Search = () => {
 
             <View className="my-5">
               <SearchBar
-                placeholder="Search movies..."
+                placeholder="Search for a movie"
                 value={searchQuery}
-                onChangeText={(text: string) => setSearchQuery(text)}
+                onChangeText={handleSearch}
               />
             </View>
 
@@ -67,10 +71,9 @@ const Search = () => {
             {!moviesLoading &&
               !moviesError &&
               searchQuery.trim() &&
-              movies &&
-              movies?.length > 0 && (
+              movies?.length! > 0 && (
                 <Text className="text-xl text-white font-bold">
-                  Search results for{" "}
+                  Search Results for{" "}
                   <Text className="text-accent">{searchQuery}</Text>
                 </Text>
               )}
