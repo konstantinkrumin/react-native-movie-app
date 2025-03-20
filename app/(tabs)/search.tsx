@@ -1,5 +1,5 @@
 import { View, Text, Image, FlatList, ActivityIndicator } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { images } from "@/constants/images";
 import { icons } from "@/constants/icons";
 import MovieCard from "@/components/MovieCard";
@@ -14,7 +14,21 @@ const Search = () => {
     data: movies,
     loading: moviesLoading,
     error: moviesError,
+    refetch: loadMovies,
+    reset,
   } = useFetch(() => fetchMovies({ query: searchQuery }), false);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (searchQuery.trim()) {
+        await loadMovies();
+      } else {
+        reset();
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   const handleSearch = (text: string) => {
     setSearchQuery(text);
@@ -78,6 +92,15 @@ const Search = () => {
                 </Text>
               )}
           </>
+        }
+        ListEmptyComponent={
+          !moviesLoading && !moviesError ? (
+            <View className="mt-10 px-5">
+              <Text className="text-center text-gray-500">
+                {searchQuery.trim() ? "No movies found" : "Search for a movie"}
+              </Text>
+            </View>
+          ) : null
         }
       />
     </View>
